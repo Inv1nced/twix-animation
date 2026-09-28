@@ -1,0 +1,469 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0">
+<title>Чистилка Twix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Mono&family=PT+Sans+Narrow:wght@400;700&family=PT+Sans:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#E9EDEB; --paper:#F7F8F6; --ink:#1E2A30; --muted:#5B686D; --line:#8E9A9E; --faint:#C9D1CF;
+  --body:#D3DAD8; --cavity:#F3F5F4; --choc:#6A3B22; --choc-hi:#95593A; --film:#9AA7AE; --film-fill:rgba(160,175,182,.18);
+  --glass:rgba(150,190,210,.16); --glass-line:#7FA3B5; --pad:#5F7F8C;
+  --accent:#D9581A; --ok:#23945A; --metal:#7B888F; --servo:#3A4A52; --motor:#4B5A62; --bin:#6E7B80;
+  --band:rgba(30,42,48,.035);
+  --f-display:"PT Sans Narrow","Arial Narrow",Arial,sans-serif;
+  --f-body:"PT Sans","Segoe UI",Arial,sans-serif;
+  --f-mono:"PT Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#101618; --paper:#172023; --ink:#E0E7E8; --muted:#95A3A7; --line:#5D6D72; --faint:#2E3B3F;
+    --body:#2B373A; --cavity:#1A2326; --choc:#7B4629; --choc-hi:#A8663F; --film:#8796A0; --film-fill:rgba(135,150,160,.14);
+    --glass:rgba(120,170,195,.12); --glass-line:#6E95A8; --pad:#6F93A2;
+    --accent:#F07A35; --ok:#41BE78; --metal:#A1AFB6; --servo:#8A9BA3; --motor:#7E8F97; --bin:#8A989D;
+    --band:rgba(255,255,255,.035);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101618; --paper:#172023; --ink:#E0E7E8; --muted:#95A3A7; --line:#5D6D72; --faint:#2E3B3F;
+  --body:#2B373A; --cavity:#1A2326; --choc:#7B4629; --choc-hi:#A8663F; --film:#8796A0; --film-fill:rgba(135,150,160,.14);
+  --glass:rgba(120,170,195,.12); --glass-line:#6E95A8; --pad:#6F93A2;
+  --accent:#F07A35; --ok:#41BE78; --metal:#A1AFB6; --servo:#8A9BA3; --motor:#7E8F97; --bin:#8A989D;
+  --band:rgba(255,255,255,.035);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;padding-inline:16px;padding-block:20px 32px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1;margin:0;letter-spacing:.01em;text-wrap:balance}
+.sub{margin:6px 0 0;color:var(--muted);font-size:14px}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+button{font:inherit;font-family:var(--f-body);font-size:14px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:7px 14px;cursor:pointer}
+button:hover{border-color:var(--ink)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);min-width:92px}
+.speed{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.speed button{border:0;border-radius:0;padding:7px 10px;background:var(--paper)}
+.speed button+button{border-left:1px solid var(--line)}
+.speed button[aria-pressed="true"]{background:var(--faint);font-weight:700}
+.clock{font-family:var(--f-mono);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:110px;text-align:right}
+.views{display:grid;grid-template-columns:1.45fr 1fr;gap:16px}
+figure{margin:0;background:var(--paper);border:1px solid var(--faint);border-radius:6px;padding:12px 12px 8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+figcaption{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-display);font-size:16px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}
+figcaption b{color:var(--ink);font-weight:700}
+svg{display:block;width:100%;height:auto}
+.lower{display:grid;grid-template-columns:1fr 1.6fr;gap:16px}
+.panel{background:var(--paper);border:1px solid var(--faint);border-radius:6px;padding:14px 16px;min-width:0}
+.panel h2{font-family:var(--f-display);font-size:16px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:400}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+ol.steps li button{all:unset;box-sizing:border-box;width:100%;display:grid;grid-template-columns:28px 1fr auto;column-gap:10px;align-items:baseline;padding:7px 8px;border-radius:4px;cursor:pointer}
+ol.steps li button:focus-visible{outline:2px solid var(--accent)}
+ol.steps li button:hover{background:var(--band)}
+.num{font-family:var(--f-mono);font-size:13px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;align-self:center;color:var(--muted)}
+.name{font-family:var(--f-display);font-size:19px;font-weight:700;line-height:1.1}
+.time{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.desc{grid-column:2 / 4;font-size:14px;color:var(--muted);margin-top:4px;display:none;max-width:60ch}
+li.active button{background:var(--band)}
+li.active .num{background:var(--accent);border-color:var(--accent);color:#fff}
+li.active .desc{display:block;color:var(--ink)}
+.note{font-size:13px;color:var(--muted);margin:10px 0 0}
+/* svg classes */
+.body{fill:var(--body);stroke:var(--ink);stroke-width:1.4}
+.hatch line{stroke:var(--line);stroke-width:.8}
+.cav{fill:var(--cavity);stroke:var(--ink);stroke-width:1}
+.cav-n{fill:var(--cavity)}
+.lid{fill:var(--glass);stroke:var(--glass-line);stroke-width:1.4}
+.pad{fill:var(--pad)}
+.film{fill:var(--film-fill);stroke:var(--film);stroke-width:1.6;stroke-linejoin:round}
+.film-line{fill:none;stroke:var(--film);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.crimp{fill:var(--film);stroke:var(--film);stroke-width:1}
+.choc{fill:var(--choc)}
+.choc-hi{fill:none;stroke:var(--choc-hi);stroke-width:2;stroke-linecap:round}
+.blade{fill:var(--metal);stroke:var(--ink);stroke-width:.8}
+.blade.hot{fill:var(--accent)}
+.servo{fill:var(--servo)}
+.arm{stroke:var(--servo);stroke-width:3;stroke-linecap:round}
+.bin{fill:none;stroke:var(--bin);stroke-width:2}
+.flap{fill:var(--metal);stroke:var(--ink);stroke-width:.8}
+.screw{fill:var(--faint);stroke:var(--line);stroke-width:1}
+.thread{stroke:var(--line);stroke-width:1}
+.carriage{fill:var(--motor)}
+.cutter{fill:var(--metal);stroke:var(--ink);stroke-width:.6}
+.cutter.hot{fill:var(--accent)}
+.motor{fill:var(--motor)}
+.belt{fill:none;stroke:var(--line);stroke-width:1.4}
+.cut{stroke:var(--accent);stroke-width:2.2;stroke-dasharray:5 3}
+.sensor{fill:var(--servo)}
+.sensor.on{fill:var(--ok)}
+.beam{stroke:var(--ok);stroke-width:2;stroke-dasharray:2 2}
+.chute{fill:var(--metal);stroke:var(--ink);stroke-width:.8}
+.tray{fill:var(--paper);stroke:var(--ink);stroke-width:1.2}
+.board{fill:#1F6F8B;stroke:var(--ink);stroke-width:.6}
+.pin{fill:#E6C14A}
+.lbl{font-family:var(--f-body);font-size:12px;fill:var(--ink)}
+.lbl.sm{font-size:10.5px;fill:var(--muted)}
+.lead{stroke:var(--muted);stroke-width:.8;fill:none}
+.axis{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:14 3 2 3}
+.sec{font-family:var(--f-display);font-size:16px;font-weight:700;fill:var(--ink)}
+.spark{fill:var(--accent)}
+/* chart */
+.c-lbl{font-family:var(--f-body);font-size:12.5px;fill:var(--ink)}
+.c-tick{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
+.c-grid{stroke:var(--faint);stroke-width:1}
+.c-base{stroke:var(--line);stroke-width:1}
+.c-area{fill:var(--accent);fill-opacity:.16;stroke:var(--accent);stroke-width:1.6;stroke-linejoin:round}
+.c-area.ok{fill:var(--ok);stroke:var(--ok)}
+.c-band{fill:var(--band)}
+.c-step{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
+.c-head{stroke:var(--ink);stroke-width:1.6}
+.c-hit{fill:transparent;cursor:ew-resize}
+@media (max-width:900px){
+  .views,.lower{grid-template-columns:1fr}
+  .clock{text-align:left}
+}
+@media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto} }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Чистилка Twix</h1>
+      <p class="sub">Принцип работы станка для снятия упаковки. Один цикл — 13 секунд.</p>
+    </div>
+    <div class="controls">
+      <button id="play" class="primary" type="button">Пауза</button>
+      <button id="restart" type="button">Заново</button>
+      <div class="speed" role="group" aria-label="Скорость">
+        <button type="button" data-speed="0.5" aria-pressed="false">0,5×</button>
+        <button type="button" data-speed="1" aria-pressed="true">1×</button>
+        <button type="button" data-speed="2" aria-pressed="false">2×</button>
+      </div>
+      <span class="clock" id="clock">t = 0,0 с</span>
+    </div>
+  </header>
+
+  <div class="views">
+    <!-- SIDE VIEW -->
+    <figure>
+      <figcaption><b>Продольный вид</b><span>вдоль батончика</span></figcaption>
+      <svg viewBox="0 0 600 380" role="img" aria-label="Продольный вид станка: ножи на концах, каретка с лезвием под батончиком">
+        <defs>
+          <pattern id="thr" width="6" height="6" patternUnits="userSpaceOnUse"><line class="thread" x1="0" y1="0" x2="3" y2="6"/></pattern>
+        </defs>
+        <rect class="body" x="40" y="70" width="520" height="235" rx="6"/>
+        <rect class="cav" x="84" y="70" width="432" height="222"/>
+        <!-- bins -->
+        <path class="bin" d="M90 240 V296 H128 V240"/>
+        <path class="bin" d="M472 240 V296 H510 V240"/>
+        <!-- screw, motor -->
+        <rect class="screw" x="134" y="223" width="332" height="6"/>
+        <rect x="134" y="223" width="332" height="6" fill="url(#thr)"/>
+        <rect class="belt" x="135" y="220" width="14" height="42" rx="7"/>
+        <rect class="motor" x="136" y="252" width="36" height="16" rx="2"/>
+        <line id="s-cut" class="cut" x1="140" y1="206" x2="140" y2="206"/>
+        <!-- bar -->
+        <g id="s-bar">
+          <polygon id="s-crL" class="crimp" points="120,170 100,170 104,175 100,180 104,185 100,190 104,195 100,200 120,200"/>
+          <polygon id="s-crR" class="crimp" points="480,170 500,170 496,175 500,180 496,185 500,190 496,195 500,200 480,200"/>
+          <g id="s-choc">
+            <rect class="choc" x="122" y="168" width="356" height="35" rx="5"/>
+            <path class="choc-hi" d="M132 174 H468"/>
+            <path class="choc-hi" d="M132 186 H468" opacity=".45"/>
+          </g>
+          <rect id="s-film" class="film" x="118" y="164" width="364" height="42" rx="3"/>
+        </g>
+        <!-- flaps -->
+        <rect id="s-flap" class="flap" x="130" y="206" width="340" height="6"/>
+        <!-- carriage -->
+        <g id="s-car">
+          <rect class="carriage" x="132" y="216" width="16" height="20" rx="2"/>
+          <polygon id="s-cutter" class="cutter" points="136,216 144,216 140,206"/>
+        </g>
+        <!-- blades + servos -->
+        <rect class="servo" x="88" y="76" width="22" height="26" rx="2"/>
+        <rect class="servo" x="490" y="76" width="22" height="26" rx="2"/>
+        <line id="s-armL" class="arm" x1="104" y1="88" x2="116" y2="94"/>
+        <line id="s-armR" class="arm" x1="496" y1="88" x2="484" y2="94"/>
+        <polygon id="s-bL" class="blade" points="116,88 124,88 124,150 116,160"/>
+        <polygon id="s-bR" class="blade" points="476,88 484,88 484,160 476,150"/>
+        <!-- IR -->
+        <rect id="s-ir" class="sensor" x="86" y="180" width="8" height="10" rx="1"/>
+        <line id="s-beam" class="beam" x1="94" y1="185" x2="100" y2="185"/>
+        <!-- lid -->
+        <g id="s-lid">
+          <rect class="lid" x="150" y="70" width="300" height="86"/>
+          <rect class="pad" x="140" y="156" width="320" height="8" rx="2"/>
+          <rect class="lid" x="40" y="58" width="520" height="12" rx="3"/>
+        </g>
+        <!-- section A-A marker -->
+        <line class="axis" x1="300" y1="44" x2="300" y2="316"/>
+        <text class="sec" x="306" y="52">А</text>
+        <text class="sec" x="306" y="316">А</text>
+        <!-- labels -->
+        <text class="lbl" x="99" y="30" text-anchor="middle">Сервопривод</text>
+        <path class="lead" d="M99 35 V76"/>
+        <text class="lbl" x="166" y="46">Косой нож</text>
+        <path class="lead" d="M164 42 L124 110"/>
+        <text class="lbl" x="300" y="22" text-anchor="middle">Крышка с силиконовым прижимом</text>
+        <text class="lbl" x="434" y="46" text-anchor="end">Косой нож</text>
+        <path class="lead" d="M436 42 L476 110"/>
+        <text class="lbl" x="501" y="30" text-anchor="middle">Сервопривод</text>
+        <path class="lead" d="M501 35 V76"/>
+        <text class="lbl sm" x="90" y="176" text-anchor="middle">ИК</text>
+        <text class="lbl" x="250" y="283" text-anchor="middle">Створки дна</text>
+        <path class="lead" d="M250 272 V213"/>
+        <text class="lbl" x="109" y="328" text-anchor="middle">Бункер</text>
+        <text class="lbl" x="109" y="343" text-anchor="middle">обрезков</text>
+        <path class="lead" d="M109 316 V297"/>
+        <text class="lbl" x="190" y="336">Мотор N20</text>
+        <path class="lead" d="M188 332 L166 268"/>
+        <text class="lbl" x="330" y="328">Винт и каретка</text>
+        <text class="lbl" x="330" y="343">с лезвием</text>
+        <path class="lead" d="M372 316 V230"/>
+        <text class="lbl" x="491" y="328" text-anchor="middle">Бункер</text>
+        <text class="lbl" x="491" y="343" text-anchor="middle">обрезков</text>
+        <path class="lead" d="M491 316 V297"/>
+      </svg>
+    </figure>
+
+    <!-- FRONT SECTION -->
+    <figure>
+      <figcaption><b>Разрез А–А</b><span>поперёк батончика</span></figcaption>
+      <svg viewBox="0 0 500 380" role="img" aria-label="Поперечный разрез: две палочки в плёнке, створки дна, каретка, наклонный жёлоб и лоток">
+        <defs>
+          <pattern id="hatch" class="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7"/></pattern>
+        </defs>
+        <rect class="body" x="30" y="70" width="350" height="265" rx="6"/>
+        <rect x="30" y="70" width="350" height="265" rx="6" fill="url(#hatch)"/>
+        <rect class="cav-n" x="136" y="70" width="148" height="122"/>
+        <rect class="cav-n" x="44" y="84" width="80" height="98"/>
+        <rect class="cav-n" x="44" y="190" width="322" height="131"/>
+        <path class="lead" d="M136 70 V190 M284 70 V190"/>
+        <!-- chute -->
+        <polygon class="chute" points="44,236 300,300 300,306 44,242"/>
+        <!-- arduino -->
+        <rect class="board" x="54" y="100" width="60" height="26" rx="2"/>
+        <rect class="pin" x="58" y="102" width="52" height="3"/>
+        <rect class="pin" x="58" y="121" width="52" height="3"/>
+        <text class="lbl sm" x="84" y="142" text-anchor="middle">Arduino Nano</text>
+        <!-- IR -->
+        <rect id="f-ir" class="sensor" x="128" y="150" width="8" height="10" rx="1"/>
+        <line id="f-beam" class="beam" x1="136" y1="155" x2="142" y2="155"/>
+        <text class="lbl sm" x="84" y="172" text-anchor="middle">ИК-датчик</text>
+        <path class="lead" d="M108 168 L128 157"/>
+        <!-- carriage -->
+        <rect class="carriage" x="204" y="204" width="12" height="18" rx="2"/>
+        <circle class="screw" cx="210" cy="213" r="5"/>
+        <polygon id="f-cutter" class="cutter" points="206,204 214,204 210,184"/>
+        <!-- tray -->
+        <path class="tray" d="M290 298 V334 H422 V298"/>
+        <!-- sticks -->
+        <g id="f-st1"><rect class="choc" x="146" y="138" width="60" height="38" rx="8"/><path class="choc-hi" d="M154 145 H198"/></g>
+        <g id="f-st2"><rect class="choc" x="214" y="138" width="60" height="38" rx="8"/><path class="choc-hi" d="M222 145 H266"/></g>
+        <!-- film -->
+        <g id="f-film">
+          <polyline id="f-filmL" class="film-line" points=""/>
+          <polyline id="f-filmR" class="film-line" points=""/>
+          <line id="f-fin" class="film-line" x1="207" y1="188" x2="213" y2="188"/>
+        </g>
+        <circle id="f-spark" class="spark" cx="210" cy="186" r="0"/>
+        <!-- flaps -->
+        <g id="f-flL"><rect class="flap" x="136" y="180" width="71" height="6"/><rect class="servo" x="198" y="186" width="8" height="6"/></g>
+        <g id="f-flR"><rect class="flap" x="213" y="180" width="71" height="6"/><rect class="servo" x="214" y="186" width="8" height="6"/></g>
+        <!-- lid -->
+        <g id="f-lid">
+          <rect class="lid" x="160" y="70" width="100" height="56"/>
+          <rect class="pad" x="150" y="126" width="120" height="8" rx="2"/>
+          <rect class="lid" x="30" y="58" width="350" height="12" rx="3"/>
+          <circle class="servo" cx="36" cy="64" r="4"/>
+        </g>
+        <!-- labels -->
+        <text class="sec" x="210" y="30" text-anchor="middle">А–А</text>
+        <text class="lbl" x="394" y="104">Прижим</text>
+        <path class="lead" d="M392 100 L270 130"/>
+        <text class="lbl" x="394" y="150">Палочки</text>
+        <path class="lead" d="M392 146 L274 150"/>
+        <text class="lbl" x="394" y="176">Плёнка</text>
+        <path class="lead" d="M392 172 L279 168"/>
+        <text class="lbl" x="394" y="202">Створки</text>
+        <path class="lead" d="M392 198 L270 184"/>
+        <text class="lbl" x="394" y="228">Каретка</text>
+        <path class="lead" d="M392 224 L217 212"/>
+        <text class="lbl" x="394" y="262">Жёлоб</text>
+        <path class="lead" d="M392 258 L262 290"/>
+        <text class="lbl" x="428" y="322">Лоток</text>
+              </svg>
+    </figure>
+  </div>
+
+  <div class="lower">
+    <section class="panel">
+      <h2>Цикл работы</h2>
+      <ol class="steps" id="steps"></ol>
+    </section>
+    <section class="panel">
+      <h2>Циклограмма</h2>
+      <svg id="chart" viewBox="0 0 720 196" role="img" aria-label="Циклограмма: положение каждого узла во времени"></svg>
+      <p class="note">Верх полосы — рабочее положение узла (крышка закрыта, нож внизу, каретка в конце хода, створки открыты), низ — исходное. Нажмите на циклограмму, чтобы перейти к нужному моменту.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+  const T = 13;
+  const steps = [
+    {a:0,   b:2,   name:'Загрузка',       text:'Батончик кладут в лоток швом вниз. Крышка открыта.'},
+    {a:2,   b:3,   name:'Фиксация',       text:'Крышка закрывается, силиконовый прижим держит батончик. Выключатель крышки и ИК-датчик разрешают запуск.'},
+    {a:3,   b:5,   name:'Обрезка концов', text:'Два косых гильотинных ножа опускаются и срезают запаянные концы упаковки. Обрезки падают в бункеры.'},
+    {a:5,   b:8.5, name:'Разрез шва',     text:'Каретка с лезвием проходит по пазу под батончиком, разрезает продольный шов и возвращается назад.'},
+    {a:8.5, b:11,  name:'Выгрузка',       text:'Створки дна раскрываются, прижимы разводят плёнку в стороны. Палочки падают на наклонный жёлоб и скатываются в лоток.'},
+    {a:11,  b:13,  name:'Возврат',        text:'Створки закрываются, крышка открывается, пустую плёнку вынимают. Станок готов к следующему батончику.'}
+  ];
+  const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+  const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+  const seg=(t,a,b)=>ease(clamp((t-a)/(b-a)));
+  const lin=(t,a,b)=>clamp((t-a)/(b-a));
+  const $=id=>document.getElementById(id);
+  const fmt=n=>n.toFixed(1).replace('.',',');
+
+  // actuator states 0..1
+  const S = {
+    lid:t=>seg(t,2,3)-seg(t,11.8,12.8),
+    ir:t=>(t>=2.8&&t<9.3)?1:0,
+    blade:t=>seg(t,3,3.8)-seg(t,4.2,5),
+    car:t=>seg(t,5,7)-seg(t,7,8.5),
+    flaps:t=>seg(t,8.5,9.3)-seg(t,11,11.8)
+  };
+
+  // film halves (front)
+  const filmClosed=[[207,188],[207,180],[146,180],[142,176],[142,138],[146,134],[210,134]];
+  const filmOpen  =[[158,250],[154,238],[140,206],[137,198],[138,146],[144,136],[210,132]];
+  function filmPts(f,mirror){
+    return filmClosed.map((p,i)=>{
+      let x=p[0]+(filmOpen[i][0]-p[0])*f, y=p[1]+(filmOpen[i][1]-p[1])*f;
+      if(mirror) x=420-x;
+      return x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+  }
+  function stickT(p,fallDy,fx,fy,cx,cy){
+    if(p<=0) return '';
+    if(p<.4){const q=p/.4;return `translate(0 ${fallDy*q*q}) rotate(${14*q} ${cx} ${cy})`;}
+    const q=ease((p-.4)/.6);
+    return `translate(${fx*q} ${fallDy+(fy-fallDy)*q}) rotate(${14*(1-q)} ${cx} ${cy})`;
+  }
+  const set=(el,k,v)=>el.setAttribute(k,v);
+
+  const E={}; ['s-bar','s-choc','s-film','s-crL','s-crR','s-bL','s-bR','s-armL','s-armR','s-lid','s-ir','s-beam','s-car','s-cutter','s-cut','s-flap',
+    'f-lid','f-st1','f-st2','f-film','f-filmL','f-filmR','f-fin','f-flL','f-flR','f-ir','f-beam','f-cutter','f-spark'].forEach(id=>E[id]=$(id));
+
+  function render(t){
+    const load=seg(t,0,1.6), barOp=clamp(load*2.5);
+    const closed=S.lid(t), ir=S.ir(t), blade=S.blade(t), car=S.car(t), flaps=S.flaps(t);
+    const cutP=seg(t,5,7), drop=lin(t,9.3,10.5);
+    const filmFade=1-seg(t,12.1,12.7), wasteFade=1-seg(t,12.4,13);
+    const cf=lin(t,3.8,4.6);
+
+    // ---- side view
+    const barY=-150*(1-load);
+    set(E['s-bar'],'transform',`translate(0 ${barY})`); set(E['s-bar'],'opacity',barOp);
+    set(E['s-choc'],'transform',`translate(0 ${140*drop*drop})`); set(E['s-choc'],'opacity',1-drop);
+    set(E['s-film'],'opacity',(t>10.5?.6:1)*filmFade);
+    const fall=95*cf*cf;
+    set(E['s-crL'],'transform',`translate(0 ${fall}) rotate(${-25*cf} 110 185)`);
+    set(E['s-crR'],'transform',`translate(0 ${fall}) rotate(${25*cf} 490 185)`);
+    [E['s-crL'],E['s-crR']].forEach(e=>set(e,'opacity',t>=3.8?wasteFade:1));
+    const bo=62*blade;
+    set(E['s-bL'],'transform',`translate(0 ${bo})`); set(E['s-bR'],'transform',`translate(0 ${bo})`);
+    E['s-bL'].classList.toggle('hot',blade>0.02); E['s-bR'].classList.toggle('hot',blade>0.02);
+    set(E['s-armL'],'y2',94+bo); set(E['s-armR'],'y2',94+bo);
+    set(E['s-lid'],'transform',`translate(0 ${-40*(1-closed)})`); set(E['s-lid'],'opacity',.25+.75*closed);
+    E['s-ir'].classList.toggle('on',!!ir); set(E['s-beam'],'opacity',ir);
+    set(E['s-car'],'transform',`translate(${322*car} 0)`);
+    E['s-cutter'].classList.toggle('hot',t>5&&t<8.5);
+    set(E['s-cut'],'x2',140+322*cutP); set(E['s-cut'],'opacity',cutP>0?filmFade:0);
+    set(E['s-flap'],'transform',`translate(0 ${14*flaps})`); set(E['s-flap'],'opacity',1-.55*flaps);
+
+    // ---- front section
+    set(E['f-lid'],'transform',`rotate(${-28*(1-closed)} 36 64)`); set(E['f-lid'],'opacity',.35+.65*closed);
+    const fY=-175*(1-load);
+    set(E['f-film'],'transform',`translate(0 ${fY})`); set(E['f-film'],'opacity',barOp*filmFade);
+    const sOp=barOp*(t>=9.3?wasteFade:1);
+    set(E['f-st1'],'transform',`translate(0 ${fY}) `+stickT(drop,93,150,154,176,157)); set(E['f-st1'],'opacity',sOp);
+    set(E['f-st2'],'transform',`translate(0 ${fY}) `+stickT(drop,110,144,154,244,157)); set(E['f-st2'],'opacity',sOp);
+    set(E['f-filmL'],'points',filmPts(flaps,false)); set(E['f-filmR'],'points',filmPts(flaps,true));
+    set(E['f-fin'],'opacity',t<6?1:0);
+    const sp=Math.max(0,1-Math.abs(t-6)/0.25);
+    set(E['f-spark'],'r',sp*6);
+    E['f-cutter'].classList.toggle('hot',Math.abs(t-6)<0.35||Math.abs(t-7.75)<0.3);
+    set(E['f-flL'],'transform',`rotate(${72*flaps} 136 183)`);
+    set(E['f-flR'],'transform',`rotate(${-72*flaps} 284 183)`);
+    E['f-ir'].classList.toggle('on',!!ir); set(E['f-beam'],'opacity',ir);
+
+    // ---- UI
+    $('clock').textContent=`t = ${fmt(t)} с`;
+    const k=steps.findIndex(s=>t>=s.a&&t<s.b);
+    if(k!==cur){cur=k; stepEls.forEach((li,i)=>li.classList.toggle('active',i===k));}
+    const hx=X(t); set(head,'x1',hx); set(head,'x2',hx);
+  }
+
+  // ---- steps list
+  const ol=$('steps'); let cur=-1;
+  const stepEls=steps.map((s,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<button type="button"><span class="num">${i+1}</span><span class="name">${s.name}</span><span class="time">${fmt(s.a)}–${fmt(s.b)} с</span><span class="desc">${s.text}</span></button>`;
+    li.querySelector('button').addEventListener('click',()=>{t=s.a+0.001;render(t);});
+    ol.appendChild(li); return li;
+  });
+
+  // ---- chart
+  const ns='http://www.w3.org/2000/svg', chart=$('chart');
+  const x0=124,x1=704,X=t=>x0+(x1-x0)*t/T;
+  const el=(n,a,p=chart)=>{const e=document.createElementNS(ns,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+  steps.forEach((s,i)=>{
+    if(i%2===0) el('rect',{class:'c-band',x:X(s.a),y:14,width:X(s.b)-X(s.a),height:148});
+    const tx=el('text',{class:'c-step',x:(X(s.a)+X(s.b))/2,y:10,'text-anchor':'middle'}); tx.textContent=i+1;
+  });
+  const rows=[['Крышка',S.lid,''],['ИК-датчик',S.ir,'ok'],['Гильотины',S.blade,''],['Каретка',S.car,''],['Створки',S.flaps,'']];
+  rows.forEach((r,i)=>{
+    const yb=40+i*29, amp=19;
+    const lb=el('text',{class:'c-lbl',x:0,y:yb-4}); lb.textContent=r[0];
+    el('line',{class:'c-base',x1:x0,x2:x1,y1:yb,y2:yb});
+    let d=`M${x0} ${yb}`;
+    for(let j=0;j<=520;j++){const tt=T*j/520; d+=` L${X(tt).toFixed(1)} ${(yb-amp*r[1](tt)).toFixed(1)}`;}
+    d+=` L${x1} ${yb} Z`;
+    el('path',{class:'c-area'+(r[2]?' '+r[2]:''),d});
+  });
+  for(let s=0;s<=T;s++){
+    el('line',{class:'c-grid',x1:X(s),x2:X(s),y1:164,y2:170});
+    const tx=el('text',{class:'c-tick',x:X(s),y:184,'text-anchor':'middle'}); tx.textContent=s===T?`${s} с`:s;
+  }
+  const head=el('line',{class:'c-head',x1:x0,x2:x0,y1:14,y2:170});
+  const hit=el('rect',{class:'c-hit',x:x0,y:0,width:x1-x0,height:196});
+  let dragging=false;
+  const scrub=e=>{const r=chart.getBoundingClientRect();const vx=(e.clientX-r.left)/r.width*720;t=clamp((vx-x0)/(x1-x0))*T*0.9999;render(t);};
+  hit.addEventListener('pointerdown',e=>{dragging=true;hit.setPointerCapture(e.pointerId);scrub(e);});
+  hit.addEventListener('pointermove',e=>{if(dragging)scrub(e);});
+  hit.addEventListener('pointerup',()=>{dragging=false;});
+
+  // ---- playback
+  let t=0, playing=!window.matchMedia('(prefers-reduced-motion: reduce)').matches, speed=1, last=performance.now();
+  const playBtn=$('play');
+  const syncBtn=()=>{playBtn.textContent=playing?'Пауза':'Пуск';};
+  playBtn.addEventListener('click',()=>{playing=!playing;syncBtn();});
+  $('restart').addEventListener('click',()=>{t=0;render(t);});
+  document.querySelectorAll('.speed button').forEach(b=>b.addEventListener('click',()=>{
+    speed=+b.dataset.speed; document.querySelectorAll('.speed button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  }));
+  document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target===document.body){e.preventDefault();playing=!playing;syncBtn();}});
+  function frame(now){
+    const dt=Math.min(.1,(now-last)/1000); last=now;
+    if(playing&&!dragging){t=(t+dt*speed)%T;render(t);}
+    requestAnimationFrame(frame);
+  }
+  syncBtn(); render(playing?0:4.4); if(!playing)t=4.4;
+  requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
