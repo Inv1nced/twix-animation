@@ -83,7 +83,9 @@
     #twix-control-cycle .bar { fill: color-mix(in srgb, var(--candy) 36%, var(--background)); stroke: var(--candy); }
     #twix-control-cycle .beam { stroke: var(--edge); stroke-dasharray: 2 3; }
     #twix-control-cycle .beam[data-active="true"] { stroke: var(--film); stroke-width: 2; }
-    #twix-control-cycle svg text { fill: var(--foreground); }
+    #twix-control-cycle svg text { fill: var(--foreground); font-size: 10px; }
+    #twix-control-cycle svg [data-candy] text { font-size: 13px; font-weight: 700; }
+    #twix-control-cycle svg .optional-label { font-size: 8px; }
     #twix-control-cycle .screen { display: grid; gap: calc(var(--font-size-base) * .2); }
     #twix-control-cycle .screen output { font-weight: 500; }
     #twix-control-cycle .temperature { min-width: min(12rem, 100%); }
@@ -105,7 +107,7 @@
     <path class="outline" d="M20 108H197M79 108v9m96-9v9" />
     <text x="70" y="132" text-anchor="middle">Неподвижный лоток</text>
     <path class="housing" d="M186 108V89h8v19z"/>
-    <text x="190" y="122" text-anchor="middle">Упор</text>
+    <text x="190" y="118" text-anchor="middle">Упор</text>
     <g data-candy>
       <rect class="bar" x="66" y="76" width="116" height="24" rx="5" />
       <text x="124" y="93" text-anchor="middle">Twix</text>
@@ -132,14 +134,14 @@
     <path class="housing" d="M143 108h13v7h-13z"/>
     <text x="150" y="132" text-anchor="middle">Дальномер</text>
     <text x="230" y="132" text-anchor="middle">Мотор</text>
-    <text x="285" y="132" text-anchor="middle">ИК-луч</text>
+    <text class="optional-label" x="284" y="132" text-anchor="middle">ИК-луч (опция)</text>
   </svg>
   <div class="card screen">
     <span class="text-small screen-head"><b>OLED</b><span class="tabular-nums" data-screen-temp>23,0 °C</span></span>
     <output aria-live="polite" data-status>Нажмите «Сброс»</output>
     <span class="text-small" data-power>Питание приводов снято</span>
   </div>
-  <p class="note">В модели край фантика подан к валикам. Первый стенд остановит валики по таймеру. ИК-луч можно добавить позже для проверки прохода плёнки.</p>
+  <p class="note">В модели свободный край фантика уже подан к валикам. Первый стенд остановит валики по таймеру. ИК-луч можно добавить позже для проверки прохода плёнки. Пороги температуры в модели предварительные.</p>
   <details>
     <summary>Ручное управление</summary>
   <div class="viz-controls">
